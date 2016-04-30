@@ -5,20 +5,30 @@
 
 (function() {
 
+  // Baseline setup
+  // --------------
+
+  // Establish the root object, `window` (`self`) in the browser, `global`
+  // on the server, or `this` in some virtual machines. We use `self`
+  // instead of `window` for `WebWorker` support.
   // 创建 root 对象，保存全局变量的引用。对应浏览器环境中的 window (self) 对象，
   // 服务器环境中的 global 对象，或者是其他虚拟机中的 this 对象。
   var root = typeof self == 'object' && self.self === self && self ||
             typeof global == 'object' && global.global === global && global ||
             this;
 
-  // 保存原全局对象中的 _ 变量
+  // Save the previous value of the `_` variable.
+  // 保存原全局对象中的 _ 变量，此时的 _ 值为 undefined
   var previousUnderscore = root._;
 
   // Save bytes in the minified (but not gzipped) version:
+  // 定义变量储存 Array 和 Object 的 prototype 属性，用于压缩代码
   var ArrayProto = Array.prototype, ObjProto = Object.prototype;
+  // 如果是 ES6，支持 Symbol，则定义变量储存 Symbol.prototype
   var SymbolProto = typeof Symbol !== 'undefined' ? Symbol.prototype : null;
 
   // Create quick reference variables for speed access to core prototypes.
+  // 定义变量，以快速访问核心类的原型方法
   var push = ArrayProto.push,
       slice = ArrayProto.slice,
       toString = ObjProto.toString,
@@ -26,6 +36,7 @@
 
   // All **ECMAScript 5** native function implementations that we hope to use
   // are declared here.
+  // 定义变量存储 ES5 实现的原生对象方法
   var nativeIsArray = Array.isArray,
       nativeKeys = Object.keys,
       nativeCreate = Object.create;
@@ -34,6 +45,7 @@
   var Ctor = function(){};
 
   // Create a safe reference to the Underscore object for use below.
+  // 创建安全的 underscore 对象的引用
   var _ = function(obj) {
     if (obj instanceof _) return obj;
     if (!(this instanceof _)) return new _(obj);
@@ -45,6 +57,7 @@
   // the browser, add `_` as a global object.
   // (`nodeType` is checked to ensure that `module`
   // and `exports` are not HTML elements.)
+  // 导出 undefined 对象，兼容 exports 和 module.exports
   if (typeof exports != 'undefined' && !exports.nodeType) {
     if (typeof module != 'undefined' && !module.nodeType && module.exports) {
       exports = module.exports = _;
@@ -55,12 +68,16 @@
   }
 
   // Current version.
+  // 定义版本号
   _.VERSION = '1.8.3';
 
   // Internal function that returns an efficient (for current engines) version
   // of the passed-in callback, to be repeatedly applied in other Underscore
   // functions.
+  // 通过回调返回高效的内部函数，重复使用于 underscore
   var optimizeCb = function(func, context, argCount) {
+    // 没有上下文参数时，返回回调函数
+    // void 0 的目的是为了返回 undefined，undefined 不是保留字，可以被覆盖
     if (context === void 0) return func;
     switch (argCount == null ? 3 : argCount) {
       case 1: return function(value) {
@@ -75,6 +92,7 @@
         return func.call(context, accumulator, value, index, collection);
       };
     }
+    // 不全部使用 apply 的原因是因为使用 call 编译器能够优化
     return function() {
       return func.apply(context, arguments);
     };
@@ -151,12 +169,13 @@
     return typeof length == 'number' && length >= 0 && length <= MAX_ARRAY_INDEX;
   };
 
-  // Collection Functions
+  // 集合函数
   // --------------------
 
   // The cornerstone, an `each` implementation, aka `forEach`.
   // Handles raw objects in addition to array-likes. Treats all
   // sparse array-likes as if they were dense.
+  // 集合函数中的基础函数：each函数，亦称为forEach。 数组使用索引迭代，对象使用键迭代。
   _.each = _.forEach = function(obj, iteratee, context) {
     iteratee = optimizeCb(iteratee, context);
     var i, length;
