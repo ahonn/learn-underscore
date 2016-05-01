@@ -180,14 +180,13 @@
     return results;
   };
 
-  // Create a reducing function iterating left or right.
+  // 创建一个从左到右，或者从右到左的迭代函数，参数 dir == 1 时从左到右，反之亦然
   var createReduce = function(dir) {
-    // Wrap code that reassigns argument variables in a separate function than
-    // the one that accesses `arguments.length` to avoid a perf hit. (#1991)
     var reducer = function(obj, iteratee, memo, initial) {
       var keys = !isArrayLike(obj) && _.keys(obj),
           length = (keys || obj).length,
           index = dir > 0 ? 0 : length - 1;
+      // 只有 obj 与 iteratee 参数时，初始化 memo 并移动索引到第二个
       if (!initial) {
         memo = obj[keys ? keys[index] : index];
         index += dir;
@@ -205,11 +204,10 @@
     };
   };
 
-  // **Reduce** builds up a single result from a list of values, aka `inject`,
-  // or `foldl`.
+  // reduce 函数，从左到右迭代处理对象的每个成员，并返回一个单一的值。亦称为 foldl 或者 inject
   _.reduce = _.foldl = _.inject = createReduce(1);
 
-  // The right-associative version of reduce, also known as `foldr`.
+  // reduceRight 函数，从右到左迭代处理对象的每个成员，并返回一个单一的值。亦称为 foldr
   _.reduceRight = _.foldr = createReduce(-1);
 
   // Return the first value which passes a truth test. Aliased as `detect`.
