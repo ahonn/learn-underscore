@@ -5,37 +5,29 @@
 
 (function() {
 
-  // Baseline setup
+  // 基本设置
   // --------------
 
-  // Establish the root object, `window` (`self`) in the browser, `global`
-  // on the server, or `this` in some virtual machines. We use `self`
-  // instead of `window` for `WebWorker` support.
   // 创建 root 对象，保存全局变量的引用。对应浏览器环境中的 window (self) 对象，
   // 服务器环境中的 global 对象，或者是其他虚拟机中的 this 对象。
   var root = typeof self == 'object' && self.self === self && self ||
             typeof global == 'object' && global.global === global && global ||
             this;
 
-  // Save the previous value of the `_` variable.
   // 保存原全局对象中的 _ 变量，此时的 _ 值为 undefined
   var previousUnderscore = root._;
 
-  // Save bytes in the minified (but not gzipped) version:
   // 定义变量储存 Array 和 Object 的 prototype 属性，用于压缩代码
   var ArrayProto = Array.prototype, ObjProto = Object.prototype;
   // 如果是 ES6，支持 Symbol，则定义变量储存 Symbol.prototype
   var SymbolProto = typeof Symbol !== 'undefined' ? Symbol.prototype : null;
 
-  // Create quick reference variables for speed access to core prototypes.
   // 定义变量，以快速访问核心类的原型方法
   var push = ArrayProto.push,
       slice = ArrayProto.slice,
       toString = ObjProto.toString,
       hasOwnProperty = ObjProto.hasOwnProperty;
 
-  // All **ECMAScript 5** native function implementations that we hope to use
-  // are declared here.
   // 定义变量存储 ES5 实现的原生对象方法
   var nativeIsArray = Array.isArray,
       nativeKeys = Object.keys,
@@ -44,7 +36,6 @@
   // Naked function reference for surrogate-prototype-swapping.
   var Ctor = function(){};
 
-  // Create a safe reference to the Underscore object for use below.
   // 创建安全的 underscore 对象的引用
   var _ = function(obj) {
     if (obj instanceof _) return obj;
@@ -52,11 +43,6 @@
     this._wrapped = obj;
   };
 
-  // Export the Underscore object for **Node.js**, with
-  // backwards-compatibility for their old module API. If we're in
-  // the browser, add `_` as a global object.
-  // (`nodeType` is checked to ensure that `module`
-  // and `exports` are not HTML elements.)
   // 导出 undefined 对象，兼容 exports 和 module.exports
   if (typeof exports != 'undefined' && !exports.nodeType) {
     if (typeof module != 'undefined' && !module.nodeType && module.exports) {
@@ -67,14 +53,10 @@
     root._ = _;
   }
 
-  // Current version.
   // 定义版本号
   _.VERSION = '1.8.3';
 
-  // Internal function that returns an efficient (for current engines) version
-  // of the passed-in callback, to be repeatedly applied in other Underscore
-  // functions.
-  // 通过回调返回高效的内部函数，重复使用于 underscore
+  // 返回优化的内部回调函数 optimize call back
   var optimizeCb = function(func, context, argCount) {
     // 没有上下文参数时，返回回调函数
     // void 0 的目的是为了返回 undefined，undefined 不是保留字，可以被覆盖
@@ -83,8 +65,6 @@
       case 1: return function(value) {
         return func.call(context, value);
       };
-      // The 2-parameter case has been omitted only because no current consumers
-      // made use of it.
       case 3: return function(value, index, collection) {
         return func.call(context, value, index, collection);
       };
@@ -100,12 +80,10 @@
 
   var builtinIteratee;
 
-  // An internal function to generate callbacks that can be applied to each
-  // element in a collection, returning the desired result — either `identity`,
-  // an arbitrary callback, a property matcher, or a property accessor.
+  // 产生回调函数,可以应用到集合中的每个元素,返回所需的结果
   var cb = function(value, context, argCount) {
     if (_.iteratee !== builtinIteratee) return _.iteratee(value, context);
-    if (value == null) return _.identity;
+    if (value == null) return _.identity; // 无回调时，返回一个返回自身的函数
     if (_.isFunction(value)) return optimizeCb(value, context, argCount);
     if (_.isObject(value)) return _.matcher(value);
     return _.property(value);
@@ -172,9 +150,6 @@
   // 集合函数
   // --------------------
 
-  // The cornerstone, an `each` implementation, aka `forEach`.
-  // Handles raw objects in addition to array-likes. Treats all
-  // sparse array-likes as if they were dense.
   // 集合函数中的基础函数：each函数，亦称为forEach。 数组使用索引迭代，对象使用键迭代。
   _.each = _.forEach = function(obj, iteratee, context) {
     iteratee = optimizeCb(iteratee, context);
@@ -192,12 +167,12 @@
     return obj;
   };
 
-  // Return the results of applying the iteratee to each element.
+  // map 函数，在对象的每一个元素上执行函数，并返回结果。
   _.map = _.collect = function(obj, iteratee, context) {
     iteratee = cb(iteratee, context);
-    var keys = !isArrayLike(obj) && _.keys(obj),
-        length = (keys || obj).length,
-        results = Array(length);
+    var keys = !isArrayLike(obj) && _.keys(obj),  // 如果不是数组，则获取对象的键
+        length = (keys || obj).length,  // 获取对象或者数组的长度
+        results = Array(length);  // 创建等长的结果集数组
     for (var index = 0; index < length; index++) {
       var currentKey = keys ? keys[index] : index;
       results[index] = iteratee(obj[currentKey], currentKey, obj);
@@ -975,8 +950,7 @@
     }
   };
 
-  // Retrieve the names of an object's own properties.
-  // Delegates to **ECMAScript 5**'s native `Object.keys`.
+  // 检索对象自身属性
   _.keys = function(obj) {
     if (!_.isObject(obj)) return [];
     if (nativeKeys) return nativeKeys(obj);
@@ -1353,8 +1327,7 @@
     return obj === void 0;
   };
 
-  // Shortcut function for checking if an object has a given property directly
-  // on itself (in other words, not on a prototype).
+  // 检查属性是否为自身属性，而不是来自 prototype
   _.has = function(obj, key) {
     return obj != null && hasOwnProperty.call(obj, key);
   };
