@@ -56,7 +56,7 @@
   // 定义版本号
   _.VERSION = '1.8.3';
 
-  // 返回优化的内部回调函数 optimize call back
+  // 返回针对当前引擎优化的内部回调函数 optimize call back
   var optimizeCb = function(func, context, argCount) {
     // 没有上下文参数时，返回回调函数
     // void 0 的目的是为了返回 undefined，undefined 不是保留字，可以被覆盖
