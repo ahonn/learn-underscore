@@ -130,18 +130,17 @@
     return result;
   };
 
+  // 获取对象属性
   var property = function(key) {
     return function(obj) {
       return obj == null ? void 0 : obj[key];
     };
   };
 
-  // Helper for collection methods to determine whether a collection
-  // should be iterated as an array or as an object.
-  // Related: http://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength
-  // Avoids a very nasty iOS 8 JIT bug on ARM-64. #2094
+  // 用于判断迭代器迭代对象是数组还是对象
   var MAX_ARRAY_INDEX = Math.pow(2, 53) - 1;
   var getLength = property('length');
+  // 判断是否为数组，对象没有 length 属性
   var isArrayLike = function(collection) {
     var length = getLength(collection);
     return typeof length == 'number' && length >= 0 && length <= MAX_ARRAY_INDEX;
@@ -197,7 +196,7 @@
       }
       return memo;
     };
-
+    // 使用闭包返回，目的是为了持久化变量，函数不会在使用后就回收，避免再次创建函数，提高效率
     return function(obj, iteratee, memo, context) {
       var initial = arguments.length >= 3;
       return reducer(obj, optimizeCb(iteratee, context, 4), memo, initial);
@@ -210,26 +209,28 @@
   // reduceRight 函数，从右到左迭代处理对象的每个成员，并返回一个单一的值。亦称为 foldr
   _.reduceRight = _.foldr = createReduce(-1);
 
-  // Return the first value which passes a truth test. Aliased as `detect`.
+  // find 函数，返回集合中符合条件的第一个元素，亦称为 detect
   _.find = _.detect = function(obj, predicate, context) {
+    // 获取 find* 函数
     var keyFinder = isArrayLike(obj) ? _.findIndex : _.findKey;
     var key = keyFinder(obj, predicate, context);
     if (key !== void 0 && key !== -1) return obj[key];
   };
 
-  // Return all the elements that pass a truth test.
-  // Aliased as `select`.
+  // filter 函数，过滤集合中符合条件的元素。亦称为 select
   _.filter = _.select = function(obj, predicate, context) {
     var results = [];
     predicate = cb(predicate, context);
+    // 遍历集合，符合条件则 push 到结果集中
     _.each(obj, function(value, index, list) {
       if (predicate(value, index, list)) results.push(value);
     });
     return results;
   };
 
-  // Return all the elements for which a truth test fails.
+  // reject 函数，与 filter 函数相反，过滤集合中不符合条件的元素
   _.reject = function(obj, predicate, context) {
+    // 通过 _.negate 返回相反结果的 predicate 函数实现
     return _.filter(obj, _.negate(cb(predicate)), context);
   };
 
@@ -612,7 +613,7 @@
     return result;
   };
 
-  // Generator function to create the findIndex and findLastIndex functions.
+  // 生成器函数，返回 findIndex 或者 findLastIndex 函数
   var createPredicateIndexFinder = function(dir) {
     return function(array, predicate, context) {
       predicate = cb(predicate, context);
@@ -625,7 +626,7 @@
     };
   };
 
-  // Returns the first index on an array-like that passes a predicate test.
+  // 返回数组中符合条件的第一个下标
   _.findIndex = createPredicateIndexFinder(1);
   _.findLastIndex = createPredicateIndexFinder(-1);
 
@@ -876,7 +877,7 @@
     return _.partial(wrapper, func);
   };
 
-  // Returns a negated version of the passed-in predicate.
+  // 返回相反结果的函数
   _.negate = function(predicate) {
     return function() {
       return !predicate.apply(this, arguments);
@@ -1051,7 +1052,7 @@
   // (https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object/assign)
   _.extendOwn = _.assign = createAssigner(_.keys);
 
-  // Returns the first key on an object that passes a predicate test.
+  // 返回对象中符合条件的第一个索引，对应数组中使用的是 findIndex
   _.findKey = function(obj, predicate, context) {
     predicate = cb(predicate, context);
     var keys = _.keys(obj), key;
