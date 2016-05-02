@@ -234,12 +234,7 @@
     return _.filter(obj, _.negate(cb(predicate)), context);
   };
 
-<<<<<<< HEAD
   // every 函数，确定集合中所有元素是否符合条件，返回布尔值。亦称为 all
-=======
-  // Determine whether all of the elements match a truth test.
-  // Aliased as `all`.
->>>>>>> ae2098e2c7288f12553498b5516384d1e129fbbc
   _.every = _.all = function(obj, predicate, context) {
     predicate = cb(predicate, context);
     var keys = !isArrayLike(obj) && _.keys(obj),
@@ -251,12 +246,7 @@
     return true;
   };
 
-<<<<<<< HEAD
   // some 函数，确定集合中至少有一个元素符合条件，返回布尔值。亦称为 any
-=======
-  // Determine if at least one element in the object matches a truth test.
-  // Aliased as `any`.
->>>>>>> ae2098e2c7288f12553498b5516384d1e129fbbc
   _.some = _.any = function(obj, predicate, context) {
     predicate = cb(predicate, context);
     var keys = !isArrayLike(obj) && _.keys(obj),
@@ -268,12 +258,7 @@
     return false;
   };
 
-<<<<<<< HEAD
   // contains 函数，确定集合是否包含给定的一个项，使用 “===”。亦称为 includes 或 include
-=======
-  // Determine if the array or object contains a given item (using `===`).
-  // Aliased as `includes` and `include`.
->>>>>>> ae2098e2c7288f12553498b5516384d1e129fbbc
   _.contains = _.includes = _.include = function(obj, item, fromIndex, guard) {
     if (!isArrayLike(obj)) obj = _.values(obj);
     if (typeof fromIndex != 'number' || guard) fromIndex = 0;
