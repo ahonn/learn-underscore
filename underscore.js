@@ -265,10 +265,12 @@
     return _.indexOf(obj, item, fromIndex) >= 0;
   };
 
-  // Invoke a method (with arguments) on every item in a collection.
+  // invoke 函数，对集合中的每个元素使用指定的函数
   _.invoke = restArgs(function(obj, method, args) {
     var isFunc = _.isFunction(method);
     return _.map(obj, function(value) {
+      // 如果传入函数则使用该函数，如果传入的是对象自有函数的函数名，使用对象的函数
+      // value[method] 相当于 value.method
       var func = isFunc ? method : value[method];
       return func == null ? func : func.apply(value, args);
     });
@@ -1290,7 +1292,7 @@
     };
   }
 
-  // Optimize `isFunction` if appropriate. Work around some typeof bugs in old v8,
+  // 适当的优化 isFunction 函数，兼容某些错误
   // IE 11 (#1621), Safari 8 (#1929), and PhantomJS (#2236).
   var nodelist = root.document && root.document.childNodes;
   if (typeof /./ != 'function' && typeof Int8Array != 'object' && typeof nodelist != 'function') {
