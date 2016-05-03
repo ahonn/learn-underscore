@@ -627,8 +627,7 @@
   _.findIndex = createPredicateIndexFinder(1);
   _.findLastIndex = createPredicateIndexFinder(-1);
 
-  // Use a comparator function to figure out the smallest index at which
-  // an object should be inserted so as to maintain order. Uses binary search.
+  // 使用二分差找来搜寻下标
   _.sortedIndex = function(array, obj, iteratee, context) {
     iteratee = cb(iteratee, context, 1);
     var value = iteratee(obj);
@@ -640,20 +639,24 @@
     return low;
   };
 
-  // Generator function to create the indexOf and lastIndexOf functions.
+  // 创建 indexOf 或者 lastIndexOf 函数的通用函数。
   var createIndexFinder = function(dir, predicateFind, sortedIndex) {
     return function(array, item, idx) {
       var i = 0, length = getLength(array);
+      // 搜索起始位置是否为 number
       if (typeof idx == 'number') {
+        // 转换下标
         if (dir > 0) {
           i = idx >= 0 ? idx : Math.max(idx + length, i);
         } else {
           length = idx >= 0 ? Math.min(idx + 1, length) : idx + length + 1;
         }
       } else if (sortedIndex && idx && length) {
+        // 当目标数组太大并且已经排序，传入 idx 为 true, 则会使用二分查找
         idx = sortedIndex(array, item);
         return array[idx] === item ? idx : -1;
       }
+      // item !== item 的意思是 item 是 NaN。这里用于查找数组中的 NaN
       if (item !== item) {
         idx = predicateFind(slice.call(array, i, length), _.isNaN);
         return idx >= 0 ? idx + i : -1;
@@ -665,10 +668,8 @@
     };
   };
 
-  // Return the position of the first occurrence of an item in an array,
-  // or -1 if the item is not included in the array.
-  // If the array is large and already in sort order, pass `true`
-  // for **isSorted** to use binary search.
+  // 查找数组中是否存在某个值，如果存在则返回下标，不存在返回 -1
+  // 当数组较大，可以通过第三个参数传入 true，来使用二分查找，前提是数组已经通过 sort
   _.indexOf = createIndexFinder(1, _.findIndex, _.sortedIndex);
   _.lastIndexOf = createIndexFinder(-1, _.findLastIndex);
 
@@ -967,7 +968,7 @@
     return keys;
   };
 
-  // Retrieve the values of an object's properties.
+  // 以数组的形式返回对象的值
   _.values = function(obj) {
     var keys = _.keys(obj);
     var length = keys.length;
