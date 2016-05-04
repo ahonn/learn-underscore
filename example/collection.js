@@ -1,0 +1,62 @@
+var _ = require('underscore')._;
+
+var arr = [1, 2, 3];
+
+var obj = {
+  "one": 1,
+  "two": 2,
+  "there": 3
+};
+
+var e = _.each(arr, function (value, key) {
+  console.log(key + value);
+  return key + value;
+});
+console.log(e);
+
+var m = _.map(arr, function (value, key) {
+  console.log(key + value);
+  return key + value;
+});
+console.log(m);
+
+var r = _.reduce(arr, function (memo, value) {
+  return memo + value;
+}, 0);
+console.log(r);
+
+var r = _.reduceRight(obj, function (memo, value, key) {
+  return memo + value + key;
+}, '');
+console.log(r);
+
+var f = _.filter(arr, function (value) {
+  return value % 2 == 0;
+});
+console.log(f);
+
+var f = _.find(arr, function (value) {
+  return value % 1 == 0;
+});
+console.log(f);
+
+var r = _.reject(arr, function (value) {
+  return value % 2 == 0;
+});
+console.log(r);
+
+var e = _.every(arr, function (value) {
+  return value > 0;
+});
+console.log(e);
+
+var s = _.some(arr, function (value) {
+  return value < 0;
+});
+console.log(s);
+
+var c = _.contains(arr, 2, 2);
+console.log(c);
+
+var i = _.invoke([[3, 2, 1], [8, 2, 3]], 'sort');
+console.log(i);

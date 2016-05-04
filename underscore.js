@@ -276,7 +276,7 @@
     });
   });
 
-  // Convenience version of a common use case of `map`: fetching a property.
+  // pluck 函数，封装 map 用来快捷的获取对象的属性
   _.pluck = function(obj, key) {
     return _.map(obj, _.property(key));
   };
@@ -1364,8 +1364,7 @@
     };
   };
 
-  // Returns a predicate for checking whether an object has a given set of
-  // `key:value` pairs.
+  // 返回一个函数，检查对象是否具有特定的属性
   _.matcher = _.matches = function(attrs) {
     attrs = _.extendOwn({}, attrs);
     return function(obj) {
