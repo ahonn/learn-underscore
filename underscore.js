@@ -281,14 +281,12 @@
     return _.map(obj, _.property(key));
   };
 
-  // Convenience version of a common use case of `filter`: selecting only objects
-  // containing specific `key:value` pairs.
+  // where 函数，封装 filter 用来获取包含特定键值对
   _.where = function(obj, attrs) {
     return _.filter(obj, _.matcher(attrs));
   };
 
-  // Convenience version of a common use case of `find`: getting the first object
-  // containing specific `key:value` pairs.
+  // findWhere 函数，封装 find 用来获取包含特定键值对的第一个对象
   _.findWhere = function(obj, attrs) {
     return _.find(obj, _.matcher(attrs));
   };
@@ -1026,9 +1024,10 @@
     return names.sort();
   };
 
-  // An internal function for creating assigner functions.
+  // 返回一个赋值器函数，新的函数第一个参数为对象，接受多个参数，将后面参数的对象的属性赋值给第一个对象
   var createAssigner = function(keysFunc, defaults) {
     return function(obj) {
+      // 获取传入参数个数
       var length = arguments.length;
       if (defaults) obj = Object(obj);
       if (length < 2 || obj == null) return obj;
@@ -1038,6 +1037,7 @@
             l = keys.length;
         for (var i = 0; i < l; i++) {
           var key = keys[i];
+          // 键不存在时合并
           if (!defaults || obj[key] === void 0) obj[key] = source[key];
         }
       }
@@ -1128,8 +1128,9 @@
     return obj;
   };
 
-  // Returns whether an object has a given set of `key:value` pairs.
+  // 返回对象是否包含特定的属性（键值对）
   _.isMatch = function(object, attrs) {
+    // 检查的键值对的键，以及键值对个数
     var keys = _.keys(attrs), length = keys.length;
     if (object == null) return !length;
     var obj = Object(object);
@@ -1366,6 +1367,7 @@
 
   // 返回一个函数，检查对象是否具有特定的属性
   _.matcher = _.matches = function(attrs) {
+    // 合并属性，这里是创建一个包含 attrs 属性的对象
     attrs = _.extendOwn({}, attrs);
     return function(obj) {
       return _.isMatch(obj, attrs);

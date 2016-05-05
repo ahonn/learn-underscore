@@ -1,4 +1,4 @@
-var _ = require('underscore')._;
+var _ = require('../underscore.js')._;
 
 var arr = [1, 2, 3];
 
@@ -60,3 +60,13 @@ console.log(c);
 
 var i = _.invoke([[3, 2, 1], [8, 2, 3]], 'sort');
 console.log(i);
+
+var stooges = [{name: 'moe', age: 40}, {name: 'larry', age: 40}, {name: 'curly', age: 60}];
+var p = _.pluck(stooges, 'name');
+console.log(p);
+
+var w = _.where(stooges, {age: 40});
+console.log(w);
+
+var f = _.findWhere(stooges, {age: 40});
+console.log(f);
