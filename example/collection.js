@@ -70,3 +70,13 @@ console.log(w);
 
 var f = _.findWhere(stooges, {age: 40});
 console.log(f);
+
+var m = _.max(stooges, function (value) {
+  return value.age;
+});
+console.log(m);
+
+var m = _.min(stooges, function (value) {
+  return value.age;
+});
+console.log(m);

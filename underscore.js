@@ -291,10 +291,11 @@
     return _.find(obj, _.matcher(attrs));
   };
 
-  // Return the maximum element (or element-based computation).
+  // 返回集合中的最大项
   _.max = function(obj, iteratee, context) {
     var result = -Infinity, lastComputed = -Infinity,
         value, computed;
+    // 若排序规则为空，比较值大小
     if (iteratee == null || (typeof iteratee == 'number' && typeof obj[0] != 'object') && obj != null) {
       obj = isArrayLike(obj) ? obj : _.values(obj);
       for (var i = 0, length = obj.length; i < length; i++) {
@@ -303,6 +304,7 @@
           result = value;
         }
       }
+    // 排序规则不为空，则使用排序规则排序，取最大值
     } else {
       iteratee = cb(iteratee, context);
       _.each(obj, function(v, index, list) {
@@ -316,7 +318,7 @@
     return result;
   };
 
-  // Return the minimum element (or element-based computation).
+  // 返回集合中的最小项
   _.min = function(obj, iteratee, context) {
     var result = Infinity, lastComputed = Infinity,
         value, computed;
