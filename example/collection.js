@@ -80,3 +80,14 @@ var m = _.min(stooges, function (value) {
   return value.age;
 });
 console.log(m);
+
+var s = _.sample(arr);
+console.log(s);
+
+var s = _.sample(arr, 2);
+console.log(s);
+
+var s = _.sortBy(arr, function (num) {
+  return Math.sin(num);
+});
+console.log(s);

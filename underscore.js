@@ -343,37 +343,42 @@
     return result;
   };
 
-  // Shuffle a collection.
+  // shuffle 函数，返回打乱的集合
   _.shuffle = function(obj) {
     return _.sample(obj, Infinity);
   };
 
-  // Sample **n** random values from a collection using the modern version of the
-  // [Fisher-Yates shuffle](http://en.wikipedia.org/wiki/Fisher–Yates_shuffle).
-  // If **n** is not specified, returns a single random element.
-  // The internal `guard` argument allows it to work with `map`.
+  // sample 函数，从集合中随机抽取若干个样本，不指定 n 则返回一个随机项
   _.sample = function(obj, n, guard) {
+    // n == null 时，返回 obj 中的一个项
     if (n == null || guard) {
       if (!isArrayLike(obj)) obj = _.values(obj);
       return obj[_.random(obj.length - 1)];
     }
+    // 获取集合中各项的值
     var sample = isArrayLike(obj) ? _.clone(obj) : _.values(obj);
     var length = getLength(sample);
+    // 处理 n, 确保 n > 0 且 n < length
     n = Math.max(Math.min(n, length), 0);
     var last = length - 1;
+    // 对每一项，随机与其他项交换值
     for (var index = 0; index < n; index++) {
       var rand = _.random(index, last);
       var temp = sample[index];
       sample[index] = sample[rand];
       sample[rand] = temp;
     }
+    // 截取前 n 个项
     return sample.slice(0, n);
   };
 
   // Sort the object's values by a criterion produced by an iteratee.
   _.sortBy = function(obj, iteratee, context) {
     var index = 0;
+    // iteratee 不存在时，cb 会返回 _.identity。即 criteria == value
     iteratee = cb(iteratee, context);
+    // pluck 获取 value 值得集合
+    // map 处理集合为类数组，通过 iteratee 添加用于排序的 criteria
     return _.pluck(_.map(obj, function(value, key, list) {
       return {
         value: value,
@@ -381,6 +386,7 @@
         criteria: iteratee(value, key, list)
       };
     }).sort(function(left, right) {
+      // 根据 criteria 从大到小排序
       var a = left.criteria;
       var b = right.criteria;
       if (a !== b) {
@@ -1116,7 +1122,7 @@
     return result;
   };
 
-  // Create a (shallow-cloned) duplicate of an object.
+  // 创建一个克隆的对象，浅复制
   _.clone = function(obj) {
     if (!_.isObject(obj)) return obj;
     return _.isArray(obj) ? obj.slice() : _.extend({}, obj);
@@ -1344,7 +1350,7 @@
     return this;
   };
 
-  // Keep the identity function around for default iteratees.
+  // 返回自身值的迭代器，用于某些函数没有 iteratee 的情况
   _.identity = function(value) {
     return value;
   };
@@ -1384,7 +1390,7 @@
     return accum;
   };
 
-  // Return a random integer between min and max (inclusive).
+  // 返回一个随机的整数，存在 min 与 max 时返回其之间的数，否则返回 0 到指定的数之间的值
   _.random = function(min, max) {
     if (max == null) {
       max = min;
