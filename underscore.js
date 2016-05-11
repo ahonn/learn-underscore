@@ -372,7 +372,7 @@
     return sample.slice(0, n);
   };
 
-  // Sort the object's values by a criterion produced by an iteratee.
+  // sortBy 函数，根据排序规则排序集合，无规则则默认按值由大到小排序
   _.sortBy = function(obj, iteratee, context) {
     var index = 0;
     // iteratee 不存在时，cb 会返回 _.identity。即 criteria == value
@@ -397,12 +397,13 @@
     }), 'value');
   };
 
-  // An internal function used for aggregate "group by" operations.
+  // 用于 group by 的内部函数
   var group = function(behavior, partition) {
     return function(obj, iteratee, context) {
       var result = partition ? [[], []] : {};
       iteratee = cb(iteratee, context);
       _.each(obj, function(value, index) {
+        // 通过 iteratee 函数分类
         var key = iteratee(value, index, obj);
         behavior(result, value, key);
       });
@@ -410,9 +411,9 @@
     };
   };
 
-  // Groups the object's values by a criterion. Pass either a string attribute
-  // to group by, or a function that returns the criterion.
+  // groupBy 函数，通过 iteratee 结果分组，如果 iteratee 是字符串则通过该属性名称分组
   _.groupBy = group(function(result, value, key) {
+    // 存在该键则添加该键中的元素，不存在则创建新集合
     if (_.has(result, key)) result[key].push(value); else result[key] = [value];
   });
 

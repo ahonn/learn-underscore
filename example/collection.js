@@ -91,3 +91,8 @@ var s = _.sortBy(arr, function (num) {
   return Math.sin(num);
 });
 console.log(s);
+
+var g = _.groupBy([1.2, 2.3, 2.4], function (num) {
+  return Math.floor(num);
+});
+console.log(g);
