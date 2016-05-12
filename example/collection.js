@@ -96,3 +96,20 @@ var g = _.groupBy([1.2, 2.3, 2.4], function (num) {
   return Math.floor(num);
 });
 console.log(g);
+
+var stooges = [{name: 'moe', age: 40}, {name: 'larry', age: 50}, {name: 'curly', age: 60}];
+var i = _.indexBy(stooges, 'name');
+console.log(i);
+
+var g = _.countBy(arr, function (num) {
+  return num % 2 == 0 ? 'even': 'odd';
+});
+console.log(g);
+
+var s = _.size(arr);
+console.log(s);
+
+var p = _.partition(arr, function (num) {
+  return num % 2 == 0;
+});
+console.log(p);

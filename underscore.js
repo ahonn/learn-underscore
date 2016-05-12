@@ -89,9 +89,7 @@
     return _.property(value);
   };
 
-  // External wrapper for our callback generator. Users may customize
-  // `_.iteratee` if they want additional predicate/iteratee shorthand styles.
-  // This abstraction hides the internal-only argCount argument.
+  // 回调函数的包装函数
   _.iteratee = builtinIteratee = function(value, context) {
     return cb(value, context, Infinity);
   };
@@ -417,21 +415,18 @@
     if (_.has(result, key)) result[key].push(value); else result[key] = [value];
   });
 
-  // Indexes the object's values by a criterion, similar to `groupBy`, but for
-  // when you know that your index values will be unique.
+  // indexBy 函数，通过索引分组，键值对唯一
   _.indexBy = group(function(result, value, key) {
     result[key] = value;
   });
 
-  // Counts instances of an object that group by a certain criterion. Pass
-  // either a string attribute to count by, or a function that returns the
-  // criterion.
+  // countBy 函数，返回类似通过 groupBy 分组后计数，返回键与对于的值得数量
   _.countBy = group(function(result, value, key) {
     if (_.has(result, key)) result[key]++; else result[key] = 1;
   });
 
   var reStrSymbol = /[^\ud800-\udfff]|[\ud800-\udbff][\udc00-\udfff]|[\ud800-\udfff]/g;
-  // Safely create a real, live array from anything iterable.
+  // toArray 函数，转换集合为数组
   _.toArray = function(obj) {
     if (!obj) return [];
     if (_.isArray(obj)) return slice.call(obj);
@@ -443,14 +438,13 @@
     return _.values(obj);
   };
 
-  // Return the number of elements in an object.
+  // size 函数，返回集合长度
   _.size = function(obj) {
     if (obj == null) return 0;
     return isArrayLike(obj) ? obj.length : _.keys(obj).length;
   };
 
-  // Split a collection into two arrays: one whose elements all satisfy the given
-  // predicate, and one whose elements all do not satisfy the predicate.
+  // partition 函数，分解集合为两个集合，一个为符合指定条件，另一个为不符合
   _.partition = group(function(result, value, pass) {
     result[pass ? 0 : 1].push(value);
   }, true);
