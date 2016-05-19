@@ -449,36 +449,32 @@
     result[pass ? 0 : 1].push(value);
   }, true);
 
-  // Array Functions
+  // 数组函数
   // ---------------
 
-  // Get the first element of an array. Passing **n** will return the first N
-  // values in the array. Aliased as `head` and `take`. The **guard** check
-  // allows it to work with `_.map`.
+  // frist 函数，获取数组前 n 个元素，当 n 为空时，返回第一个元素
   _.first = _.head = _.take = function(array, n, guard) {
+    // 当数组为空时，返回 undefined
     if (array == null || array.length < 1) return void 0;
+    // 当 n 为空时，返回数组第一个元素
     if (n == null || guard) return array[0];
     return _.initial(array, array.length - n);
   };
 
-  // Returns everything but the last entry of the array. Especially useful on
-  // the arguments object. Passing **n** will return all the values in
-  // the array, excluding the last N.
+  // initial 函数，删除数组中的后 n 个元素，当 n 为空时，删除最后一个元素
   _.initial = function(array, n, guard) {
     return slice.call(array, 0, Math.max(0, array.length - (n == null || guard ? 1 : n)));
   };
 
-  // Get the last element of an array. Passing **n** will return the last N
-  // values in the array.
+  // last 函数，获取数组后 n 个元素，当 n 为空时，返回最后一个元素
   _.last = function(array, n, guard) {
     if (array == null || array.length < 1) return void 0;
+    // 当 n 为空时，返回最后一个元素
     if (n == null || guard) return array[array.length - 1];
     return _.rest(array, Math.max(0, array.length - n));
   };
 
-  // Returns everything but the first entry of the array. Aliased as `tail` and `drop`.
-  // Especially useful on the arguments object. Passing an **n** will return
-  // the rest N values in the array.
+  // rest 函数，删除数组中前 n 个元素，当 n 为空时，删除第一个元素
   _.rest = _.tail = _.drop = function(array, n, guard) {
     return slice.call(array, n == null || guard ? 1 : n);
   };
