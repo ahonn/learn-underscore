@@ -479,7 +479,7 @@
     return slice.call(array, n == null || guard ? 1 : n);
   };
 
-  // Trim out all falsy values from an array.
+  // compact 函数，去除数组中的 falsy 项
   _.compact = function(array) {
     return _.filter(array, Boolean);
   };
