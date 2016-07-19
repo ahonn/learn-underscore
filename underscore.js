@@ -484,29 +484,35 @@
     return _.filter(array, Boolean);
   };
 
-  // Internal implementation of a recursive `flatten` function.
+  // flatten 函数的内部实现
+  // input 为需要展开的数组，shallow 为是否需要浅展开
+  // strict 为当 shallow 为 true 时，是否严格过滤数组中的非数组项，output 为输出的数组
   var flatten = function(input, shallow, strict, output) {
     output = output || [];
     var idx = output.length;
     for (var i = 0, length = getLength(input); i < length; i++) {
       var value = input[i];
+      // 检查 input 中的项是否为 数组 或者 arguments
       if (isArrayLike(value) && (_.isArray(value) || _.isArguments(value))) {
-        // Flatten current level of array or arguments object.
+        // 浅展开该项，并赋值给 output
         if (shallow) {
           var j = 0, len = value.length;
           while (j < len) output[idx++] = value[j++];
         } else {
+          // 深展开则递归这一过程
           flatten(value, shallow, strict, output);
           idx = output.length;
         }
       } else if (!strict) {
+        // 若该项非数组或 arguments, 且为不严格过滤展开，不做任何处理
+        // 即严格过滤非数组项并且是深展开时，最后得到的 output 为空数组
         output[idx++] = value;
       }
     }
     return output;
   };
 
-  // Flatten out an array, either recursively (by default), or just one level.
+  // flatten 函数，展开一个数组，默认不过滤非数组项
   _.flatten = function(array, shallow) {
     return flatten(array, shallow, false);
   };
