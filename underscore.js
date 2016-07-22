@@ -87,9 +87,14 @@
       case 2: return function(value, other) {
         return func.call(context, value, other);
       };
+
+      // 无指定参数个数时执行该 case
+      // `_.each` 与 `_.map`
       case 3: return function(value, index, collection) {
         return func.call(context, value, index, collection);
       };
+
+      // `createReduce`
       case 4: return function(accumulator, value, index, collection) {
         return func.call(context, accumulator, value, index, collection);
       };
@@ -176,19 +181,26 @@
   };
 
   // Collection Functions
+  // 集合函数
   // --------------------
 
   // The cornerstone, an `each` implementation, aka `forEach`.
   // Handles raw objects in addition to array-likes. Treats all
   // sparse array-likes as if they were dense.
+  // `each` 函数，亦称为 `forEach`。
+  // 遍历集合中的每个元素，类数组使用索引迭代，对象使用键迭代。
   _.each = _.forEach = function(obj, iteratee, context) {
+    // content !== undefined 时返回 iteratee.call(context, value, index, collection)。
+    // 否则返回原 iteratee 函数。
     iteratee = optimizeCb(iteratee, context);
     var i, length;
+
     if (isArrayLike(obj)) {
       for (i = 0, length = obj.length; i < length; i++) {
         iteratee(obj[i], i, obj);
       }
     } else {
+      // 不为类数组时，获取对象的 key。
       var keys = _.keys(obj);
       for (i = 0, length = keys.length; i < length; i++) {
         iteratee(obj[keys[i]], keys[i], obj);
@@ -198,11 +210,17 @@
   };
 
   // Return the results of applying the iteratee to each element.
+  // `map` 函数，亦称为 `collect`。
+  // 在集合的每个元素上执行 iteratee 方法，结果保存在数组中并返回。
   _.map = _.collect = function(obj, iteratee, context) {
     iteratee = cb(iteratee, context);
+
+    // 不为类数组时，获取对象的 key。
     var keys = !isArrayLike(obj) && _.keys(obj),
         length = (keys || obj).length,
+        // 创建与 Obj 长度相同的数组。
         results = Array(length);
+    // 疑问：为什么上面的 `each` 函数不像 `map` 函数一样这样实现？
     for (var index = 0; index < length; index++) {
       var currentKey = keys ? keys[index] : index;
       results[index] = iteratee(obj[currentKey], currentKey, obj);
@@ -211,12 +229,18 @@
   };
 
   // Create a reducing function iterating left or right.
+  // 创建正序或者倒序迭代的函数。
+  // 提供给 `reduce` 或者 `reduceRight` 使用。
+  // dir == 1 正序
+  // dir == -1 倒序
   function createReduce(dir) {
     // Optimized iterator function as using arguments.length
     // in the main function will deoptimize the, see #1991.
+    // 使用 arguments.length 优化迭代函数。
     function iterator(obj, iteratee, memo, keys, index, length) {
       for (; index >= 0 && index < length; index += dir) {
         var currentKey = keys ? keys[index] : index;
+        // 迭代操作，并返回提供下次迭代调用。
         memo = iteratee(memo, obj[currentKey], currentKey, obj);
       }
       return memo;
@@ -226,8 +250,10 @@
       iteratee = optimizeCb(iteratee, context, 4);
       var keys = !isArrayLike(obj) && _.keys(obj),
           length = (keys || obj).length,
+          // 通过 dir 的值确定开始的索引位置。
           index = dir > 0 ? 0 : length - 1;
       // Determine the initial value if none is provided.
+      // 没有 memo 值时，从第二个元素开始迭代。
       if (arguments.length < 3) {
         memo = obj[keys ? keys[index] : index];
         index += dir;
@@ -238,27 +264,42 @@
 
   // **Reduce** builds up a single result from a list of values, aka `inject`,
   // or `foldl`.
+  // `reduce` 函数，亦称为 `foldl` 或 `inject`。
+  // 正序处理集合中的每个元素，最终返回一个处理后的结果。
   _.reduce = _.foldl = _.inject = createReduce(1);
 
   // The right-associative version of reduce, also known as `foldr`.
+  // `reduceRight` 函数，亦称为 `foldr`。
+  // 倒序处理集合中的每个元素，最终返回一个处理后的结果。处理顺序与 `reduce` 函数相反。
   _.reduceRight = _.foldr = createReduce(-1);
 
   // Return the first value which passes a truth test. Aliased as `detect`.
+  // `find` 函数，亦称为 `detect`。
+  // 寻找集合中第一个满足条件的元素，并返回该元素的值。
   _.find = _.detect = function(obj, predicate, context) {
     var key;
+
+    // 寻找满足条件的元素的索引或键
     if (isArrayLike(obj)) {
       key = _.findIndex(obj, predicate, context);
     } else {
       key = _.findKey(obj, predicate, context);
     }
+
+    // 若索引不为 -1 或者 键不为 undefined，即找到了满足条件的元素。
+    // 找到则返回该元素的值，否则不返回（即函数返回 undefined）。
     if (key !== void 0 && key !== -1) return obj[key];
   };
 
   // Return all the elements that pass a truth test.
   // Aliased as `select`.
+  // `filter` 函数，亦称为 `select`。
+  // 筛选集合中满足条件的元素，并返回结果集数组
   _.filter = _.select = function(obj, predicate, context) {
     var results = [];
     predicate = cb(predicate, context);
+
+    // 遍历集合中的每个元素，满足条件则存入结果集中
     _.each(obj, function(value, index, list) {
       if (predicate(value, index, list)) results.push(value);
     });
@@ -266,6 +307,8 @@
   };
 
   // Return all the elements for which a truth test fails.
+  // `reject` 函数。
+  // 筛选集合中不满足条件的元素，并返回结果集数组，与 `filter` 函数相反。
   _.reject = function(obj, predicate, context) {
     return _.filter(obj, _.negate(cb(predicate)), context);
   };
@@ -890,6 +933,7 @@
   };
 
   // Returns a negated version of the passed-in predicate.
+  // 返回一个否定版本的 predicate 方法，返回值为原方法返回值取反。
   _.negate = function(predicate) {
     return function() {
       return !predicate.apply(this, arguments);
