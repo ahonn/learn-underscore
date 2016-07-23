@@ -315,12 +315,18 @@
 
   // Determine whether all of the elements match a truth test.
   // Aliased as `all`.
+  // `every` 函数，亦称为 `all`。
+  // 判断集合中的所有元素的值是否满足条件，全部满足返回 true，否则返回 false。
   _.every = _.all = function(obj, predicate, context) {
     predicate = cb(predicate, context);
+
+    // 如果为对象则获取对象的键，否则等于 false。
     var keys = !isArrayLike(obj) && _.keys(obj),
         length = (keys || obj).length;
     for (var index = 0; index < length; index++) {
       var currentKey = keys ? keys[index] : index;
+
+      // 如果有一个元素不满足条件，则返回 false。
       if (!predicate(obj[currentKey], currentKey, obj)) return false;
     }
     return true;
@@ -328,12 +334,16 @@
 
   // Determine if at least one element in the object matches a truth test.
   // Aliased as `any`.
+  // `some` 函数，亦称为 any。
+  // 判断集合中是否有元素值符合条件，全部不满足返回 false，否则返回 true。
   _.some = _.any = function(obj, predicate, context) {
     predicate = cb(predicate, context);
     var keys = !isArrayLike(obj) && _.keys(obj),
         length = (keys || obj).length;
     for (var index = 0; index < length; index++) {
       var currentKey = keys ? keys[index] : index;
+
+      // 与 `every` 函数的区别就是这里。这里是只要有一个元素满足就返回 true。
       if (predicate(obj[currentKey], currentKey, obj)) return true;
     }
     return false;
@@ -341,9 +351,16 @@
 
   // Determine if the array or object contains a given item (using `===`).
   // Aliased as `includes` and `include`.
+  // `contains` 函数，亦称为 `includes`。
+  // 判断集合中是否包含某些项，返回布尔值。
   _.contains = _.includes = _.include = function(obj, item, fromIndex, guard) {
+    // 如果集合为对象，则获取对象的 value 组成的数组。
     if (!isArrayLike(obj)) obj = _.values(obj);
+
+    // fromIndex 为开始查找的位置参数，没有该参数则从 0 下标开始。
     if (typeof fromIndex != 'number' || guard) fromIndex = 0;
+
+    // 找到该值则返回 true。
     return _.indexOf(obj, item, fromIndex) >= 0;
   };
 
