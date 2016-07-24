@@ -365,28 +365,40 @@
   };
 
   // Invoke a method (with arguments) on every item in a collection.
+  // `invoke` 函数。
+  // 在每个 obj 上执行指定的 method 方法，并返回结果集。（例如传入 "sort"）
   _.invoke = function(obj, method) {
+    // 获取 method 之后传入的参数，这些参数将会传给 method。
     var args = slice.call(arguments, 2);
+
+    // 判断传入的 method 是否是函数。
     var isFunc = _.isFunction(method);
     return _.map(obj, function(value) {
+      // 如果 method 不为函数，则获取对象对应的 method 属性
       var func = isFunc ? method : value[method];
       return func == null ? func : func.apply(value, args);
     });
   };
 
   // Convenience version of a common use case of `map`: fetching a property.
+  // `pluck` 函数。
+  // 萃取集合中元素的某属性值，返回一个数组。
   _.pluck = function(obj, key) {
     return _.map(obj, _.property(key));
   };
 
   // Convenience version of a common use case of `filter`: selecting only objects
   // containing specific `key:value` pairs.
+  // `where` 函数。
+  // 遍历集合，筛选包含指定的 attrs 键值对的元素，返回数组。
   _.where = function(obj, attrs) {
     return _.filter(obj, _.matcher(attrs));
   };
 
   // Convenience version of a common use case of `find`: getting the first object
   // containing specific `key:value` pairs.
+  // `findWhere` 函数。
+  // 遍历集合，返回包含指定 attrs 键值对的元素。
   _.findWhere = function(obj, attrs) {
     return _.find(obj, _.matcher(attrs));
   };
