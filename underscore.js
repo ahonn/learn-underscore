@@ -404,9 +404,14 @@
   };
 
   // Return the maximum element (or element-based computation).
+  // `max` 函数。
+  // 返回集合中元素的最大值，如果传递 iteratee 参数，iteratee 将作为集合中每个元素的排序依据。
   _.max = function(obj, iteratee, context) {
     var result = -Infinity, lastComputed = -Infinity,
         value, computed;
+
+    // 如果没有传入 iteratee 参数并且集合不为空，则返回集合中的最大值。
+    // 否则使用传入的排序依据，获取最大值。
     if (iteratee == null && obj != null) {
       obj = isArrayLike(obj) ? obj : _.values(obj);
       for (var i = 0, length = obj.length; i < length; i++) {
@@ -429,6 +434,8 @@
   };
 
   // Return the minimum element (or element-based computation).
+  // `min` 函数。
+  // 返回集合中元素的最小值，如果传递 iteratee 参数，iteratee 将作为集合中每个元素的排序依据。
   _.min = function(obj, iteratee, context) {
     var result = Infinity, lastComputed = Infinity,
         value, computed;
@@ -455,6 +462,8 @@
 
   // Shuffle a collection, using the modern version of the
   // [Fisher-Yates shuffle](http://en.wikipedia.org/wiki/Fisher–Yates_shuffle).
+  // `shuffle` 函数。
+  // 随机打乱集合中的元素，返回乱序数组。
   _.shuffle = function(obj) {
     var set = isArrayLike(obj) ? obj : _.values(obj);
     var length = set.length;
@@ -470,6 +479,8 @@
   // Sample **n** random values from a collection.
   // If **n** is not specified, returns a single random element.
   // The internal `guard` argument allows it to work with `map`.
+  // `sample`对象。
+  // 从集合中返回 n 个随机项，没有 n 参数时返回一个。
   _.sample = function(obj, n, guard) {
     if (n == null || guard) {
       if (!isArrayLike(obj)) obj = _.values(obj);
@@ -479,8 +490,12 @@
   };
 
   // Sort the object's values by a criterion produced by an iteratee.
+  // `sortBy` 函数。
+  // 返回一个排序后的集合副本，如果有 iteratee 参数，使用 iteratee 作为排序依据。
   _.sortBy = function(obj, iteratee, context) {
     iteratee = cb(iteratee, context);
+    // pluck 获取 value 值得集合
+    // map 处理集合为类数组，通过 iteratee 添加用于排序的 criteria
     return _.pluck(_.map(obj, function(value, index, list) {
       return {
         value: value,
@@ -488,6 +503,7 @@
         criteria: iteratee(value, index, list)
       };
     }).sort(function(left, right) {
+      // 根据 criteria 从大到小排序
       var a = left.criteria;
       var b = right.criteria;
       if (a !== b) {
@@ -499,6 +515,7 @@
   };
 
   // An internal function used for aggregate "group by" operations.
+  // `groupBy` 函数的内部函数
   var group = function(behavior) {
     return function(obj, iteratee, context) {
       var result = {};
@@ -513,12 +530,16 @@
 
   // Groups the object's values by a criterion. Pass either a string attribute
   // to group by, or a function that returns the criterion.
+  // `groupBy` 函数。
+  // 通过 iteratee 结果分组，如果 iteratee 是字符串则通过该属性名称分组
   _.groupBy = group(function(result, value, key) {
     if (_.has(result, key)) result[key].push(value); else result[key] = [value];
   });
 
   // Indexes the object's values by a criterion, similar to `groupBy`, but for
   // when you know that your index values will be unique.
+  // `indexBy` 函数。
+  // 通过索引分组，键值对唯一
   _.indexBy = group(function(result, value, key) {
     result[key] = value;
   });
@@ -526,11 +547,15 @@
   // Counts instances of an object that group by a certain criterion. Pass
   // either a string attribute to count by, or a function that returns the
   // criterion.
+  // `countBy` 函数。
+  // 返回类似通过 groupBy 分组后计数，返回键与对于的值得数量
   _.countBy = group(function(result, value, key) {
     if (_.has(result, key)) result[key]++; else result[key] = 1;
   });
 
   // Safely create a real, live array from anything iterable.
+  // `toArray` 函数。
+  // 将集合转为数组。
   _.toArray = function(obj) {
     if (!obj) return [];
     if (_.isArray(obj)) return slice.call(obj);
@@ -539,6 +564,8 @@
   };
 
   // Return the number of elements in an object.
+  // `size` 函数。
+  // 返回集合的长度。
   _.size = function(obj) {
     if (obj == null) return 0;
     return isArrayLike(obj) ? obj.length : _.keys(obj).length;
@@ -546,6 +573,8 @@
 
   // Split a collection into two arrays: one whose elements all satisfy the given
   // predicate, and one whose elements all do not satisfy the predicate.
+  // partition 函数。
+  // 分解集合为两个集合，一个为符合指定条件，另一个为不符合
   _.partition = function(obj, predicate, context) {
     predicate = cb(predicate, context);
     var pass = [], fail = [];
