@@ -901,11 +901,13 @@
   };
 
   // Function (ahem) Functions
+  // 函数函数
   // ------------------
 
   // Determines whether to execute a function as a constructor
   // or a normal function with the provided arguments
   var executeBound = function(sourceFunc, boundFunc, context, callingContext, args) {
+    // 当 callingContext 不是 boundFunc 的实例
     if (!(callingContext instanceof boundFunc)) return sourceFunc.apply(context, args);
     var self = baseCreate(sourceFunc.prototype);
     var result = sourceFunc.apply(self, args);
@@ -916,7 +918,11 @@
   // Create a function bound to a given object (assigning `this`, and arguments,
   // optionally). Delegates to **ECMAScript 5**'s native `Function.bind` if
   // available.
+  // `bind` 函数。
+  // 绑定函数到指定对象上，可传入任意可选参数到 arguments。
   _.bind = function(func, context) {
+    // 原生支持 bind 函数时，优先使用原生 bind。
+    // natvieBind: Function.prototype.bind
     if (nativeBind && func.bind === nativeBind) return nativeBind.apply(func, slice.call(arguments, 1));
     if (!_.isFunction(func)) throw new TypeError('Bind must be called on a function');
     var args = slice.call(arguments, 2);
