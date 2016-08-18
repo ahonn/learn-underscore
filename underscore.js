@@ -924,6 +924,8 @@
     // 原生支持 bind 函数时，优先使用原生 bind。
     // natvieBind: Function.prototype.bind
     if (nativeBind && func.bind === nativeBind) return nativeBind.apply(func, slice.call(arguments, 1));
+
+    // 如果 func 不是一个函数，抛出异常
     if (!_.isFunction(func)) throw new TypeError('Bind must be called on a function');
     var args = slice.call(arguments, 2);
     var bound = function() {
