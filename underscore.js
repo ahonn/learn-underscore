@@ -937,6 +937,8 @@
   // Partially apply a function by creating a version that has had some of its
   // arguments pre-filled, without changing its dynamic `this` context. _ acts
   // as a placeholder, allowing any combination of arguments to be pre-filled.
+  // `partial` 函数。
+  // 返回一个填充了部分参数的函数。
   _.partial = function(func) {
     var boundArgs = slice.call(arguments, 1);
     var bound = function() {
@@ -965,6 +967,8 @@
   };
 
   // Memoize an expensive function by storing its results.
+  // `memoize` 函数。
+  // 缓存函数计算结果。
   _.memoize = function(func, hasher) {
     var memoize = function(key) {
       var cache = memoize.cache;
@@ -978,8 +982,12 @@
 
   // Delays a function for the given number of milliseconds, and then calls
   // it with the arguments supplied.
+  // `delay` 函数。
+  // 延迟执行函数，wait 参数为延迟时间。
   _.delay = function(func, wait) {
+    // 获取函数的参数
     var args = slice.call(arguments, 2);
+    // 返回 setTimeout
     return setTimeout(function(){
       return func.apply(null, args);
     }, wait);
@@ -987,6 +995,8 @@
 
   // Defers a function, scheduling it to run after the current call stack has
   // cleared.
+  // `defer` 函数。
+  // 延迟调用函数知道当前调用栈清空，类似使用延时为 0 的 setTimeout。
   _.defer = _.partial(_.delay, _, 1);
 
   // Returns a function, that, when invoked, will only be triggered at most once
