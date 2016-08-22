@@ -1004,12 +1004,20 @@
   // as much as it can, without ever going more than once per `wait` duration;
   // but if you'd like to disable the execution on the leading edge, pass
   // `{leading: false}`. To disable execution on the trailing edge, ditto.
+  // `throttle` 函数。
+  // 函数节流，间隔 wait 秒后才能触发。
+  // 参数 options 传入 {leading: false}，不会马上触发，在 wait 秒后触发第一次。
+  // 参数 options 传入 {trailing: false}，最后一次 func 不会触发。
   _.throttle = function(func, wait, options) {
     var context, args, result;
     var timeout = null;
     var previous = 0;
+    // 无 options 参数时，默认为空对象。
     if (!options) options = {};
+
+    // 执行方法
     var later = function() {
+      // options.leading 不为 false 时，previous 为当前时间。
       previous = options.leading === false ? 0 : _.now();
       timeout = null;
       result = func.apply(context, args);
@@ -1021,6 +1029,8 @@
       var remaining = wait - (now - previous);
       context = this;
       args = arguments;
+
+      // 到达间隔时间时触发
       if (remaining <= 0 || remaining > wait) {
         if (timeout) {
           clearTimeout(timeout);
@@ -1040,6 +1050,8 @@
   // be triggered. The function will be called after it stops being called for
   // N milliseconds. If `immediate` is passed, trigger the function on the
   // leading edge, instead of the trailing.
+  // `debounce` 函数。
+  // 函数消抖，只触发一次。
   _.debounce = function(func, wait, immediate) {
     var timeout, args, context, timestamp, result;
 
@@ -1075,6 +1087,8 @@
   // Returns the first function passed as an argument to the second,
   // allowing you to adjust arguments, run code before and after, and
   // conditionally execute the original function.
+  // `wrap` 函数。
+  // 将 func 函数封装到 wrapper 函数中。
   _.wrap = function(func, wrapper) {
     return _.partial(wrapper, func);
   };
@@ -1089,18 +1103,25 @@
 
   // Returns a function that is the composition of a list of functions, each
   // consuming the return value of the function that follows.
+  // `compose` 函数。
+  // 返回函数集 functions 组合后的复合函数。
+  // 传入参数给最后一个函数，然后将函数的返回值当作参数传入倒数第二个函数，以此类推。
   _.compose = function() {
     var args = arguments;
+    // 获取最后一个函数的下标。
     var start = args.length - 1;
     return function() {
       var i = start;
       var result = args[start].apply(this, arguments);
+      // 循环执行函数。
       while (i--) result = args[i].call(this, result);
       return result;
     };
   };
 
   // Returns a function that will only be executed on and after the Nth call.
+  // `after` 函数。
+  // 在运行了 times 次后才会有效果。
   _.after = function(times, func) {
     return function() {
       if (--times < 1) {
@@ -1110,6 +1131,8 @@
   };
 
   // Returns a function that will only be executed up to (but not including) the Nth call.
+  // `before` 函数。
+  // 运行不超过 times 次时执行 func 函数，超过则返回最后一次有效调用的返回值。
   _.before = function(times, func) {
     var memo;
     return function() {
@@ -1123,6 +1146,8 @@
 
   // Returns a function that will be executed at most one time, no matter how
   // often you call it. Useful for lazy initialization.
+  // `once` 函数。
+  // 创建只调用一次的函数，通过为 `before` 函数指定 times 为 2 实现。
   _.once = _.partial(_.before, 2);
 
   // Object Functions
@@ -1555,6 +1580,8 @@
   };
 
   // A (possibly faster) way to get the current timestamp as an integer.
+  // `now` 函数。
+  // 获取当前时间戳
   _.now = Date.now || function() {
     return new Date().getTime();
   };
