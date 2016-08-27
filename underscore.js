@@ -1151,20 +1151,29 @@
   _.once = _.partial(_.before, 2);
 
   // Object Functions
+  // 对象函数
   // ----------------
 
   // Keys in IE < 9 that won't be iterated by `for key in ...` and thus missed.
+  // `toString` 被重写后，在 IE < 9 时会无法被 `for key in ...` 枚举。
+  // 可以通过 {toString: null}.propertyIsEnumerable('toString') 判断是否为 IE < 9。
   var hasEnumBug = !{toString: null}.propertyIsEnumerable('toString');
+
+  // 无法枚举的属性集合
   var nonEnumerableProps = ['valueOf', 'isPrototypeOf', 'toString',
                       'propertyIsEnumerable', 'hasOwnProperty', 'toLocaleString'];
 
   function collectNonEnumProps(obj, keys) {
     var nonEnumIdx = nonEnumerableProps.length;
     var constructor = obj.constructor;
+    // 获取对象的原型。
+    // constructor 被重写时返回 Object.prototype，否则返回 obj.constructor.prototype。
     var proto = (_.isFunction(constructor) && constructor.prototype) || ObjProto;
 
     // Constructor is a special case.
+    // Constructor 是个特别的属性。
     var prop = 'constructor';
+    // 如果 obj 中没有 constructor 属性，为 obj 添加。
     if (_.has(obj, prop) && !_.contains(keys, prop)) keys.push(prop);
 
     while (nonEnumIdx--) {
