@@ -1178,6 +1178,8 @@
 
     while (nonEnumIdx--) {
       prop = nonEnumerableProps[nonEnumIdx];
+      // 如果 obj 有 prop 属性，且不是原型链上的属性，即重写了原型链上的属性。
+      // 将 prop 属性加入到 keys 中。
       if (prop in obj && obj[prop] !== proto[prop] && !_.contains(keys, prop)) {
         keys.push(prop);
       }
@@ -1186,20 +1188,31 @@
 
   // Retrieve the names of an object's own properties.
   // Delegates to **ECMAScript 5**'s native `Object.keys`
+  // `keys` 函数。
+  // 返回 obj 可枚举的所有属性组成的数组。
   _.keys = function(obj) {
+    // 不是对象则返回空，即 obj 为数组时没有 key。
     if (!_.isObject(obj)) return [];
+    // 优先使用本地方法 Object.key()。
     if (nativeKeys) return nativeKeys(obj);
+
+    // 获取对象的键，组成数组。
     var keys = [];
     for (var key in obj) if (_.has(obj, key)) keys.push(key);
     // Ahem, IE < 9.
+    // 添加在 IE < 9 时，重写的属性无法被 for ... in ... 枚举的 bug。
     if (hasEnumBug) collectNonEnumProps(obj, keys);
     return keys;
   };
 
   // Retrieve all the property names of an object.
+  // `allKeys` 函数。
+  // 返回 obj 拥有于继承的属性组成的数组。
   _.allKeys = function(obj) {
     if (!_.isObject(obj)) return [];
     var keys = [];
+    // 与 `keys` 函数的区别是没有判断对象本身是否有这个键。
+    // 即将从原型链继承的属性也添加到结果数组中。
     for (var key in obj) keys.push(key);
     // Ahem, IE < 9.
     if (hasEnumBug) collectNonEnumProps(obj, keys);
@@ -1207,6 +1220,8 @@
   };
 
   // Retrieve the values of an object's properties.
+  // `values` 函数。
+  // 返回由对象属性值组成的数组。
   _.values = function(obj) {
     var keys = _.keys(obj);
     var length = keys.length;
@@ -1525,6 +1540,8 @@
 
   // Shortcut function for checking if an object has a given property directly
   // on itself (in other words, not on a prototype).
+  // `has` 函数。
+  // 判断对象是否包含该键，hasOwnProperty 的引用。
   _.has = function(obj, key) {
     return obj != null && hasOwnProperty.call(obj, key);
   };
