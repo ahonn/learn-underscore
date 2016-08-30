@@ -1234,6 +1234,8 @@
 
   // Returns the results of applying the iteratee to each element of the object
   // In contrast to _.map it returns an object
+  // `mapObject` 函数。
+  // 与 `_.map` 函数类似，用于对象。
   _.mapObject = function(obj, iteratee, context) {
     iteratee = cb(iteratee, context);
     var keys =  _.keys(obj),
@@ -1248,6 +1250,8 @@
   };
 
   // Convert an object into a list of `[key, value]` pairs.
+  // `pairs` 函数。
+  // 将对象转换为 [key, value] 组成的数组。
   _.pairs = function(obj) {
     var keys = _.keys(obj);
     var length = keys.length;
@@ -1259,6 +1263,8 @@
   };
 
   // Invert the keys and values of an object. The values must be serializable.
+  // `invert` 函数。
+  // 返回一个键与值对换的新对象。
   _.invert = function(obj) {
     var result = {};
     var keys = _.keys(obj);
@@ -1270,22 +1276,32 @@
 
   // Return a sorted list of the function names available on the object.
   // Aliased as `methods`
+  // `functions` 函数。
+  // 获取对象中的方法名，并排序返回。
   _.functions = _.methods = function(obj) {
     var names = [];
     for (var key in obj) {
+      // 如果是属性值为函数，添加键名到 names 数组中。
       if (_.isFunction(obj[key])) names.push(key);
     }
+    // 返回排序后的方法名数组。
     return names.sort();
   };
 
   // Extend a given object with all the properties in passed-in object(s).
+  // `extend` 函数。
+  // 复制第二个参数对象中的所有属性覆盖到第一个对象上，并且返回这个对象。
   _.extend = createAssigner(_.allKeys);
 
   // Assigns a given object with all the own properties in the passed-in object(s)
   // (https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object/assign)
+  // `extendOwn` 函数。
+  // 与 `extend` 函数类似，但是不复制参数对象上继承的属性。
   _.extendOwn = _.assign = createAssigner(_.keys);
 
   // Returns the first key on an object that passes a predicate test
+  // `findKey` 函数。
+  // 在 obj 中查找符合 predicate 条件的键。
   _.findKey = function(obj, predicate, context) {
     predicate = cb(predicate, context);
     var keys = _.keys(obj), key;
