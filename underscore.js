@@ -1307,6 +1307,7 @@
     var keys = _.keys(obj), key;
     for (var i = 0, length = keys.length; i < length; i++) {
       key = keys[i];
+      // 返回符合条件的键名
       if (predicate(obj[key], key, obj)) return key;
     }
   };
