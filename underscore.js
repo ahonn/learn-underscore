@@ -1300,14 +1300,11 @@
   _.extendOwn = _.assign = createAssigner(_.keys);
 
   // Returns the first key on an object that passes a predicate test
-  // `findKey` 函数。
-  // 在 obj 中查找符合 predicate 条件的键。
   _.findKey = function(obj, predicate, context) {
     predicate = cb(predicate, context);
     var keys = _.keys(obj), key;
     for (var i = 0, length = keys.length; i < length; i++) {
       key = keys[i];
-      // 返回符合条件的键名
       if (predicate(obj[key], key, obj)) return key;
     }
   };
