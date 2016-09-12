@@ -1300,16 +1300,21 @@
   _.extendOwn = _.assign = createAssigner(_.keys);
 
   // Returns the first key on an object that passes a predicate test
+  // `findKey` 函数。
+  // 在 obj 中查找符合 predicate 条件的键。
   _.findKey = function(obj, predicate, context) {
     predicate = cb(predicate, context);
     var keys = _.keys(obj), key;
     for (var i = 0, length = keys.length; i < length; i++) {
       key = keys[i];
+      // 满足条件返回键名
       if (predicate(obj[key], key, obj)) return key;
     }
   };
 
   // Return a copy of the object only containing the whitelisted properties.
+  // `pick` 函数。
+  // 返回只包含指定 key 的对象，过滤不需要的 key
   _.pick = function(object, oiteratee, context) {
     var result = {}, obj = object, iteratee, keys;
     if (obj == null) return result;
