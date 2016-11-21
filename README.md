@@ -6,5 +6,5 @@ underscore.js 1.8.3 源码阅读，及中文注释
 - [x] [Collection](./src/collection.js)
 - [x] [Array](./src/array.js)
 - [x] [Functions](./src/functions.js)
-- [ ] Object
+- [x] [Object](./src/object.js)
 - [ ] Utility

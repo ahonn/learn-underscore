@@ -996,7 +996,7 @@
   // Defers a function, scheduling it to run after the current call stack has
   // cleared.
   // `defer` 函数。
-  // 延迟调用函数知道当前调用栈清空，类似使用延时为 0 的 setTimeout。
+  // 延迟调用函数直到当前调用栈清空，类似使用延时为 0 的 setTimeout。
   _.defer = _.partial(_.delay, _, 1);
 
   // Returns a function, that, when invoked, will only be triggered at most once
@@ -1335,6 +1335,7 @@
   };
 
    // Return a copy of the object without the blacklisted properties.
+   // 返回除去指定 key 的新对象
   _.omit = function(obj, iteratee, context) {
     if (_.isFunction(iteratee)) {
       iteratee = _.negate(iteratee);
@@ -1348,11 +1349,13 @@
   };
 
   // Fill in a given object with default properties.
+  // 使用默认对象填充对象
   _.defaults = createAssigner(_.allKeys, true);
 
   // Creates an object that inherits from the given prototype object.
   // If additional properties are provided then they will be added to the
   // created object.
+  // 创建具有给定原型的新对象
   _.create = function(prototype, props) {
     var result = baseCreate(prototype);
     if (props) _.extendOwn(result, props);
@@ -1360,6 +1363,7 @@
   };
 
   // Create a (shallow-cloned) duplicate of an object.
+  // 浅拷贝对象
   _.clone = function(obj) {
     if (!_.isObject(obj)) return obj;
     return _.isArray(obj) ? obj.slice() : _.extend({}, obj);
@@ -1374,7 +1378,9 @@
   };
 
   // Returns whether an object has a given set of `key:value` pairs.
+  // 返回对象中是否存在 attrs 键值对
   _.isMatch = function(object, attrs) {
+    // 获取 attrs 中的键，以及 attrs 包含的键值对长度
     var keys = _.keys(attrs), length = keys.length;
     if (object == null) return !length;
     var obj = Object(object);
@@ -1387,31 +1393,40 @@
 
 
   // Internal recursive comparison function for `isEqual`.
+  // 内部函数，递归比较
   var eq = function(a, b, aStack, bStack) {
     // Identical objects are equal. `0 === -0`, but they aren't identical.
     // See the [Harmony `egal` proposal](http://wiki.ecmascript.org/doku.php?id=harmony:egal).
+    // 0 === -0 返回 true，1/0 === 1/-0 返回 false
     if (a === b) return a !== 0 || 1 / a === 1 / b;
     // A strict comparison is necessary because `null == undefined`.
+    // null == undefined 返回 true，null === undefined 返回 false
     if (a == null || b == null) return a === b;
     // Unwrap any wrapped objects.
     if (a instanceof _) a = a._wrapped;
     if (b instanceof _) b = b._wrapped;
     // Compare `[[Class]]` names.
+    // Object.prototype.toString
     var className = toString.call(a);
     if (className !== toString.call(b)) return false;
     switch (className) {
       // Strings, numbers, regular expressions, dates, and booleans are compared by value.
       case '[object RegExp]':
       // RegExps are coerced to strings for comparison (Note: '' + /a/i === '/a/i')
+      // /a/ === new RegExp('a') 返回 false，通过转换为字符串字面量去比较
       case '[object String]':
         // Primitives and their corresponding object wrappers are equivalent; thus, `"5"` is
         // equivalent to `new String("5")`.
+        // "5" === new String("5") 返回 false, 通过转换为字符串字面量去比较
         return '' + a === '' + b;
       case '[object Number]':
         // `NaN`s are equivalent, but non-reflexive.
         // Object(NaN) is equivalent to NaN
+        // NaN !== NaN 返回 true，可以通过自身与自身比较来确认是否为 NaN
+        // 在 underscore 中，NaN 与 NaN 比较需要返回 true
         if (+a !== +a) return +b !== +b;
         // An `egal` comparison is performed for other numeric values.
+        // Number() === -0 返回 true，与之前的处理相同，比较它们的倒数
         return +a === 0 ? 1 / +a === 1 / b : +a === +b;
       case '[object Date]':
       case '[object Boolean]':
@@ -1486,6 +1501,7 @@
 
   // Is a given array, string, or object empty?
   // An "empty" object has no enumerable own-properties.
+  // 判断是否为空
   _.isEmpty = function(obj) {
     if (obj == null) return true;
     if (isArrayLike(obj) && (_.isArray(obj) || _.isString(obj) || _.isArguments(obj))) return obj.length === 0;
@@ -1493,23 +1509,28 @@
   };
 
   // Is a given value a DOM element?
+  // 判断是否为 DOM 节点
+  // https://developer.mozilla.org/en-US/docs/Web/API/Node/nodeType
   _.isElement = function(obj) {
     return !!(obj && obj.nodeType === 1);
   };
 
   // Is a given value an array?
   // Delegates to ECMA5's native Array.isArray
+  // 判断是否为数组，首选使用原生 isArray 方法，否则对比 Object.prototype.toString() 返回值
   _.isArray = nativeIsArray || function(obj) {
     return toString.call(obj) === '[object Array]';
   };
 
   // Is a given variable an object?
+  // 判断是否为对象
   _.isObject = function(obj) {
     var type = typeof obj;
     return type === 'function' || type === 'object' && !!obj;
   };
 
   // Add some isType methods: isArguments, isFunction, isString, isNumber, isDate, isRegExp, isError.
+  // 添加某些类型判断函数，通过 Object.prototype.toString() 返回值 来判断
   _.each(['Arguments', 'Function', 'String', 'Number', 'Date', 'RegExp', 'Error'], function(name) {
     _['is' + name] = function(obj) {
       return toString.call(obj) === '[object ' + name + ']';
@@ -1518,6 +1539,7 @@
 
   // Define a fallback version of the method in browsers (ahem, IE < 9), where
   // there isn't any inspectable "Arguments" type.
+  // 判断 Arguments 类型的兼容版本
   if (!_.isArguments(arguments)) {
     _.isArguments = function(obj) {
       return _.has(obj, 'callee');
@@ -1526,6 +1548,7 @@
 
   // Optimize `isFunction` if appropriate. Work around some typeof bugs in old v8,
   // IE 11 (#1621), and in Safari 8 (#1929).
+  // 适当的优化函数判断函数
   if (typeof /./ != 'function' && typeof Int8Array != 'object') {
     _.isFunction = function(obj) {
       return typeof obj == 'function' || false;
@@ -1533,26 +1556,31 @@
   }
 
   // Is a given object a finite number?
+  // 判断是否为有限数字
   _.isFinite = function(obj) {
     return isFinite(obj) && !isNaN(parseFloat(obj));
   };
 
   // Is the given value `NaN`? (NaN is the only number which does not equal itself).
+  // 判断是否为 NaN，NaN 与自身不相等
   _.isNaN = function(obj) {
     return _.isNumber(obj) && obj !== +obj;
   };
 
   // Is a given value a boolean?
+  // 判断是否为布尔值
   _.isBoolean = function(obj) {
     return obj === true || obj === false || toString.call(obj) === '[object Boolean]';
   };
 
   // Is a given value equal to null?
+  // 判断是否为 null
   _.isNull = function(obj) {
     return obj === null;
   };
 
   // Is a given variable undefined?
+  // 判断是否为 undefined
   _.isUndefined = function(obj) {
     return obj === void 0;
   };
