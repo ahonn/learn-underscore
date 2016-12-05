@@ -1,14 +1,17 @@
 // Utility Functions
+// 通用函数
 // -----------------
 
 // Run Underscore.js in *noConflict* mode, returning the `_` variable to its
 // previous owner. Returns a reference to the Underscore object.
+// 返回 Underscore 的引用
 _.noConflict = function() {
   root._ = previousUnderscore;
   return this;
 };
 
 // Keep the identity function around for default iteratees.
+// 返回自身
 _.identity = function(value) {
   return value;
 };
@@ -25,6 +28,7 @@ _.noop = function(){};
 _.property = property;
 
 // Generates a function for a given object that returns a given property.
+// 返回获取对象的 property 的函数
 _.propertyOf = function(obj) {
   return obj == null ? function(){} : function(key) {
     return obj[key];
@@ -41,7 +45,9 @@ _.matcher = _.matches = function(attrs) {
 };
 
 // Run a function **n** times.
+// 调用指定函数 n 次
 _.times = function(n, iteratee, context) {
+  // n 参数值为 0 时，不执行
   var accum = Array(Math.max(0, n));
   iteratee = optimizeCb(iteratee, context, 1);
   for (var i = 0; i < n; i++) accum[i] = iteratee(i);
@@ -49,6 +55,7 @@ _.times = function(n, iteratee, context) {
 };
 
 // Return a random integer between min and max (inclusive).
+// 返回 max 与 min 之间的随机数
 _.random = function(min, max) {
   if (max == null) {
     max = min;
@@ -58,11 +65,14 @@ _.random = function(min, max) {
 };
 
 // A (possibly faster) way to get the current timestamp as an integer.
+// `now` 函数。
+// 获取当前时间戳
 _.now = Date.now || function() {
   return new Date().getTime();
 };
 
- // List of HTML entities for escaping.
+  // List of HTML entities for escaping.
+  // 转义 HTML字符
 var escapeMap = {
   '&': '&amp;',
   '<': '&lt;',
@@ -71,6 +81,7 @@ var escapeMap = {
   "'": '&#x27;',
   '`': '&#x60;'
 };
+// 键值对换，与 escapeMap 相反
 var unescapeMap = _.invert(escapeMap);
 
 // Functions for escaping and unescaping strings to/from HTML interpolation.
@@ -92,6 +103,7 @@ _.unescape = createEscaper(unescapeMap);
 
 // If the value of the named `property` is a function then invoke it with the
 // `object` as context; otherwise, return it.
+// 返回指定的 property 的结果，为函数时直接执行函数返回结果，不存在时指定默认值返回默认值，否则返回 undefined
 _.result = function(object, property, fallback) {
   var value = object == null ? void 0 : object[property];
   if (value === void 0) {
@@ -102,6 +114,7 @@ _.result = function(object, property, fallback) {
 
 // Generate a unique integer id (unique within the entire client session).
 // Useful for temporary DOM ids.
+// 生成唯一的整数 ID
 var idCounter = 0;
 _.uniqueId = function(prefix) {
   var id = ++idCounter + '';
@@ -110,6 +123,7 @@ _.uniqueId = function(prefix) {
 
 // By default, Underscore uses ERB-style template delimiters, change the
 // following template settings to use alternative delimiters.
+// 模板设置，定义界定符
 _.templateSettings = {
   evaluate    : /<%([\s\S]+?)%>/g,
   interpolate : /<%=([\s\S]+?)%>/g,
@@ -123,6 +137,7 @@ var noMatch = /(.)^/;
 
 // Certain characters need to be escaped so that they can be put into a
 // string literal.
+// 需要转义的字符
 var escapes = {
   "'":      "'",
   '\\':     '\\',
@@ -142,11 +157,14 @@ var escapeChar = function(match) {
 // Underscore templating handles arbitrary delimiters, preserves whitespace,
 // and correctly escapes quotes within interpolated code.
 // NB: `oldSettings` only exists for backwards compatibility.
+// JavaScript 微型模板
+// oldSettings 只使用在向后兼容
 _.template = function(text, settings, oldSettings) {
   if (!settings && oldSettings) settings = oldSettings;
   settings = _.defaults({}, settings, _.templateSettings);
 
   // Combine delimiters into one regular expression via alternation.
+  // 合并界定符匹配正则表达式
   var matcher = RegExp([
     (settings.escape || noMatch).source,
     (settings.interpolate || noMatch).source,
@@ -157,14 +175,18 @@ _.template = function(text, settings, oldSettings) {
   var index = 0;
   var source = "__p+='";
   text.replace(matcher, function(match, escape, interpolate, evaluate, offset) {
+    // 将匹配到的字符串前的字符串保存下来
     source += text.slice(index, offset).replace(escaper, escapeChar);
     index = offset + match.length;
 
     if (escape) {
+      // html 转义
       source += "'+\n((__t=(" + escape + "))==null?'':_.escape(__t))+\n'";
     } else if (interpolate) {
+      // 变量替换
       source += "'+\n((__t=(" + interpolate + "))==null?'':__t)+\n'";
     } else if (evaluate) {
+      // Js 脚本执行
       source += "';\n" + evaluate + "\n__p+='";
     }
 
@@ -180,6 +202,7 @@ _.template = function(text, settings, oldSettings) {
     "print=function(){__p+=__j.call(arguments,'');};\n" +
     source + 'return __p;\n';
 
+  // 生成执行函数
   try {
     var render = new Function(settings.variable || 'obj', '_', source);
   } catch (e) {
@@ -187,6 +210,7 @@ _.template = function(text, settings, oldSettings) {
     throw e;
   }
 
+  // 预编译模板
   var template = function(data) {
     return render.call(this, data, _);
   };
@@ -199,80 +223,9 @@ _.template = function(text, settings, oldSettings) {
 };
 
 // Add a "chain" function. Start chaining a wrapped Underscore object.
+// 封装对象，使其能够链式调用
 _.chain = function(obj) {
   var instance = _(obj);
   instance._chain = true;
   return instance;
 };
-
-// OOP
-// ---------------
-// If Underscore is called as a function, it returns a wrapped object that
-// can be used OO-style. This wrapper holds altered versions of all the
-// underscore functions. Wrapped objects may be chained.
-
-// Helper function to continue chaining intermediate results.
-var result = function(instance, obj) {
-  return instance._chain ? _(obj).chain() : obj;
-};
-
-// Add your own custom functions to the Underscore object.
-_.mixin = function(obj) {
-  _.each(_.functions(obj), function(name) {
-    var func = _[name] = obj[name];
-    _.prototype[name] = function() {
-      var args = [this._wrapped];
-      push.apply(args, arguments);
-      return result(this, func.apply(_, args));
-    };
-  });
-};
-
-// Add all of the Underscore functions to the wrapper object.
-_.mixin(_);
-
-// Add all mutator Array functions to the wrapper.
-_.each(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(name) {
-  var method = ArrayProto[name];
-  _.prototype[name] = function() {
-    var obj = this._wrapped;
-    method.apply(obj, arguments);
-    if ((name === 'shift' || name === 'splice') && obj.length === 0) delete obj[0];
-    return result(this, obj);
-  };
-});
-
-// Add all accessor Array functions to the wrapper.
-_.each(['concat', 'join', 'slice'], function(name) {
-  var method = ArrayProto[name];
-  _.prototype[name] = function() {
-    return result(this, method.apply(this._wrapped, arguments));
-  };
-});
-
-// Extracts the result from a wrapped and chained object.
-_.prototype.value = function() {
-  return this._wrapped;
-};
-
-// Provide unwrapping proxy for some methods used in engine operations
-// such as arithmetic and JSON stringification.
-_.prototype.valueOf = _.prototype.toJSON = _.prototype.value;
-
-_.prototype.toString = function() {
-  return '' + this._wrapped;
-};
-
-// AMD registration happens at the end for compatibility with AMD loaders
-// that may not enforce next-turn semantics on modules. Even though general
-// practice for AMD registration is to be anonymous, underscore registers
-// as a named module because, like jQuery, it is a base library that is
-// popular enough to be bundled in a third party lib, but not be part of
-// an AMD load request. Those cases could generate an error when an
-// anonymous define() is called outside of a loader request.
-if (typeof define === 'function' && define.amd) {
-  define('underscore', [], function() {
-    return _;
-  });
-}
-}.call(this));

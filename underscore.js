@@ -1594,16 +1594,19 @@
   };
 
   // Utility Functions
+  // 通用函数
   // -----------------
 
   // Run Underscore.js in *noConflict* mode, returning the `_` variable to its
   // previous owner. Returns a reference to the Underscore object.
+  // 返回 Underscore 的引用
   _.noConflict = function() {
     root._ = previousUnderscore;
     return this;
   };
 
   // Keep the identity function around for default iteratees.
+  // 返回自身
   _.identity = function(value) {
     return value;
   };
@@ -1620,6 +1623,7 @@
   _.property = property;
 
   // Generates a function for a given object that returns a given property.
+  // 返回获取对象的 property 的函数
   _.propertyOf = function(obj) {
     return obj == null ? function(){} : function(key) {
       return obj[key];
@@ -1636,7 +1640,9 @@
   };
 
   // Run a function **n** times.
+  // 调用指定函数 n 次
   _.times = function(n, iteratee, context) {
+    // n 参数值为 0 时，不执行
     var accum = Array(Math.max(0, n));
     iteratee = optimizeCb(iteratee, context, 1);
     for (var i = 0; i < n; i++) accum[i] = iteratee(i);
@@ -1644,6 +1650,7 @@
   };
 
   // Return a random integer between min and max (inclusive).
+  // 返回 max 与 min 之间的随机数
   _.random = function(min, max) {
     if (max == null) {
       max = min;
@@ -1660,6 +1667,7 @@
   };
 
    // List of HTML entities for escaping.
+   // 转义 HTML字符
   var escapeMap = {
     '&': '&amp;',
     '<': '&lt;',
@@ -1668,6 +1676,7 @@
     "'": '&#x27;',
     '`': '&#x60;'
   };
+  // 键值对换，与 escapeMap 相反
   var unescapeMap = _.invert(escapeMap);
 
   // Functions for escaping and unescaping strings to/from HTML interpolation.
@@ -1689,6 +1698,7 @@
 
   // If the value of the named `property` is a function then invoke it with the
   // `object` as context; otherwise, return it.
+  // 返回指定的 property 的结果，为函数时直接执行函数返回结果，不存在时指定默认值返回默认值，否则返回 undefined
   _.result = function(object, property, fallback) {
     var value = object == null ? void 0 : object[property];
     if (value === void 0) {
@@ -1699,6 +1709,7 @@
 
   // Generate a unique integer id (unique within the entire client session).
   // Useful for temporary DOM ids.
+  // 生成唯一的整数 ID
   var idCounter = 0;
   _.uniqueId = function(prefix) {
     var id = ++idCounter + '';
@@ -1707,6 +1718,7 @@
 
   // By default, Underscore uses ERB-style template delimiters, change the
   // following template settings to use alternative delimiters.
+  // 模板设置，定义界定符
   _.templateSettings = {
     evaluate    : /<%([\s\S]+?)%>/g,
     interpolate : /<%=([\s\S]+?)%>/g,
@@ -1720,6 +1732,7 @@
 
   // Certain characters need to be escaped so that they can be put into a
   // string literal.
+  // 需要转义的字符
   var escapes = {
     "'":      "'",
     '\\':     '\\',
@@ -1739,11 +1752,14 @@
   // Underscore templating handles arbitrary delimiters, preserves whitespace,
   // and correctly escapes quotes within interpolated code.
   // NB: `oldSettings` only exists for backwards compatibility.
+  // JavaScript 微型模板
+  // oldSettings 只使用在向后兼容
   _.template = function(text, settings, oldSettings) {
     if (!settings && oldSettings) settings = oldSettings;
     settings = _.defaults({}, settings, _.templateSettings);
 
     // Combine delimiters into one regular expression via alternation.
+    // 合并界定符匹配正则表达式
     var matcher = RegExp([
       (settings.escape || noMatch).source,
       (settings.interpolate || noMatch).source,
@@ -1754,14 +1770,18 @@
     var index = 0;
     var source = "__p+='";
     text.replace(matcher, function(match, escape, interpolate, evaluate, offset) {
+      // 将匹配到的字符串前的字符串保存下来
       source += text.slice(index, offset).replace(escaper, escapeChar);
       index = offset + match.length;
 
       if (escape) {
+        // html 转义
         source += "'+\n((__t=(" + escape + "))==null?'':_.escape(__t))+\n'";
       } else if (interpolate) {
+        // 变量替换
         source += "'+\n((__t=(" + interpolate + "))==null?'':__t)+\n'";
       } else if (evaluate) {
+        // Js 脚本执行
         source += "';\n" + evaluate + "\n__p+='";
       }
 
@@ -1777,6 +1797,7 @@
       "print=function(){__p+=__j.call(arguments,'');};\n" +
       source + 'return __p;\n';
 
+    // 生成执行函数
     try {
       var render = new Function(settings.variable || 'obj', '_', source);
     } catch (e) {
@@ -1784,6 +1805,7 @@
       throw e;
     }
 
+    // 预编译模板
     var template = function(data) {
       return render.call(this, data, _);
     };
@@ -1796,6 +1818,7 @@
   };
 
   // Add a "chain" function. Start chaining a wrapped Underscore object.
+  // 封装对象，使其能够链式调用
   _.chain = function(obj) {
     var instance = _(obj);
     instance._chain = true;
@@ -1803,6 +1826,7 @@
   };
 
   // OOP
+  // 面向对象
   // ---------------
   // If Underscore is called as a function, it returns a wrapped object that
   // can be used OO-style. This wrapper holds altered versions of all the
@@ -1814,9 +1838,11 @@
   };
 
   // Add your own custom functions to the Underscore object.
+  // 添加自定义函数到 underscore
   _.mixin = function(obj) {
     _.each(_.functions(obj), function(name) {
       var func = _[name] = obj[name];
+      // 在 underscore 的原型上添加自定义方法
       _.prototype[name] = function() {
         var args = [this._wrapped];
         push.apply(args, arguments);
@@ -1826,9 +1852,11 @@
   };
 
   // Add all of the Underscore functions to the wrapper object.
+  // 将 underscore 定义的方法添加到原型上，使其能够以 OOP 的方式调用
   _.mixin(_);
 
   // Add all mutator Array functions to the wrapper.
+  // 添加 Array 原型上的原生方法到 underscore 上
   _.each(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(name) {
     var method = ArrayProto[name];
     _.prototype[name] = function() {
