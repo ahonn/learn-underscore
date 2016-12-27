@@ -8,4 +8,4 @@ underscore.js 1.8.3 源码阅读，及中文注释
 - [x] [Functions](./src/functions.js)
 - [x] [Object](./src/object.js)
 - [x] [Utility](./src/utility.js)
-- [x] [oop](./src/oop.js)
+- [x] [OOP](./src/oop.js)
